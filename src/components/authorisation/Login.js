@@ -4,7 +4,8 @@ import { Button, Form, FormGroup, Label, Input, Container } from "reactstrap";
 import Header from "../home/Header";
 import Footer from "../home/Footer";
 import {LoginDispatch } from "../contexts/UserContext";
-import { getUserByLogin, loginUser } from "../../api/apiCalls";
+import { getUserByLogin, getUsersTickets, loginUser } from "../../api/apiCalls";
+import { UserTicketDispatcher } from "../contexts/UserTicketsContext";
 
 
 
@@ -14,6 +15,8 @@ const Login = ({error}) => {
     const [password, setPassword] = useState('');
     
     const loginDispatcher = useContext(LoginDispatch);
+
+    const userTicketsDispatcher = useContext(UserTicketDispatcher);
 
 
 
@@ -25,6 +28,12 @@ const Login = ({error}) => {
                 loginDispatcher({
                     type:'CHANGE_USER',
                     item: result
+                })
+            })
+            getUsersTickets(login).then((result) => {
+                userTicketsDispatcher({
+                    type: 'CHANGE_TICKETS',
+                    tickets: result
                 })
             })
         })

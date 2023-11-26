@@ -10,6 +10,8 @@ import LoginContextProvider from './components/contexts/UserContext';
 import { FindedTicket } from './components/findedTickets/FindedTicket';
 import TicketRequestProvider from './components/contexts/TicketRequest';
 import UserProfile from './components/UserProfile/UserProfile';
+import FindedTicketContextProvider from './components/contexts/FindedTickerContext';
+import UserTicketContextProvider from './components/contexts/UserTicketsContext';
 
 function App() {
 
@@ -20,6 +22,8 @@ function App() {
     <LoginContextProvider >
       <TicketRequestProvider>
         <TicketContextProvider initialTickets={tickets}>
+        <FindedTicketContextProvider initialTickets={undefined}>
+        <UserTicketContextProvider initialTickets={undefined}>
           <div className="App">
             <Routes>
               <Route path='/' element={<Home/>}/>
@@ -31,6 +35,8 @@ function App() {
               <Route path='/profile' element={<UserProfile/>}/>
             </Routes>
           </div>
+          </UserTicketContextProvider>
+          </FindedTicketContextProvider>
         </TicketContextProvider>
       </TicketRequestProvider>
       </LoginContextProvider>

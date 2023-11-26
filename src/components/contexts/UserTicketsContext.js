@@ -1,32 +1,32 @@
-import dayjs from "dayjs";
 import { createContext, useReducer } from "react";
+import dayjs from "dayjs";
 
-export const FindedTicketContext = createContext();
+export const UserTicketContext = createContext();
 
-export const FindedTicketDispatch = createContext();
+export const UserTicketDispatcher = createContext();
 
-export const FilteredTicketContext = createContext();
+export const UserFilteredTicketsContext = createContext();
 
-export default function FindedTicketContextProvider({children, initialTickets}){
-    const [state, dispatch] = useReducer(FindedTicketReducer, {
+export default function UserTicketContextProvider({children, initialTickets}){
+    const [state, dispatch] = useReducer(UserTicketsReducer, {
         tickets: initialTickets,
         filteredTickets: initialTickets
     })
 
     return(
         <div>
-            <FindedTicketContext.Provider value={state.tickets}>
-                <FilteredTicketContext.Provider value={state.filteredTickets}>
-                    <FindedTicketDispatch.Provider value={dispatch}>
+            <UserTicketContext.Provider value={state.tickets}>
+                <UserFilteredTicketsContext.Provider value={state.filteredTickets}>
+                    <UserTicketDispatcher.Provider value={dispatch}>
                         {children}
-                    </FindedTicketDispatch.Provider>
-                </FilteredTicketContext.Provider>
-            </FindedTicketContext.Provider>
+                    </UserTicketDispatcher.Provider>
+                </UserFilteredTicketsContext.Provider>
+            </UserTicketContext.Provider>
         </div>
     )
 }
 
-function FindedTicketReducer(state, action){
+function UserTicketsReducer(state, action){
     switch(action.type){
         
         case 'ADD_TICKET':{
@@ -62,7 +62,7 @@ function FindedTicketReducer(state, action){
         case 'FILTER_BY_CLASS':{
             return{
                 ...state,
-                filteredTickets: state.tickets.filter((ticket) => ticket.flightClass === action.flightClass)
+                filteredTickets: state.tickets.filter((ticket) => ticket.ticket.flightClass === action.flightClass)
             }
         }
         case 'DISABLE_FILTER':{
@@ -74,21 +74,21 @@ function FindedTicketReducer(state, action){
         case 'SORT_CHEAP':{
             return{
                 ...state,
-                filteredTickets: state.filteredTickets.toSorted((a, b) => a.cost - b.cost)
+                filteredTickets: state.filteredTickets.toSorted((a, b) => a.ticket.cost - b.ticket.cost)
             }
         }
         case 'SORT_EXPENSIVE':{
             return{
                 ...state,
-                filteredTickets: state.filteredTickets.toSorted((a, b) => b.cost - a.cost)
+                filteredTickets: state.filteredTickets.toSorted((a, b) => b.ticket.cost - a.ticket.cost)
             }
         }
         case 'SORT_NEW':{
             return{
                 ...state,
                 filteredTickets: state.filteredTickets.toSorted((a, b) => {
-                    let bool = dayjs(a.flight.departureDate)
-                    .isAfter(dayjs(b.flight.departureDate)) 
+                    let bool = dayjs(a.ticket.flight.departureDate)
+                    .isAfter(dayjs(b.ticket.flight.departureDate)) 
                     if(bool){
                         return -1;
                     }
@@ -102,8 +102,8 @@ function FindedTicketReducer(state, action){
             return{
                 ...state,
                 filteredTickets: state.filteredTickets.toSorted((a, b) => {
-                    let bool = dayjs(a.flight.departureDate)
-                    .isAfter(dayjs(b.flight.departureDate)) 
+                    let bool = dayjs(a.ticket.flight.departureDate)
+                    .isAfter(dayjs(b.ticket.flight.departureDate)) 
                     if(bool){
                         return 1;
                     }

@@ -3,12 +3,14 @@ import { useNavigate } from "react-router-dom";
 import { Button, Card, CardBody, CardSubtitle, CardTitle, Col, Container, Form, Input, Label, Row } from "reactstrap";
 import { TicketRequestDispatcher } from "../contexts/TicketRequest";
 import { useApiCall } from "../../api/FetchData";
-import { getTopCities } from "../../api/apiCalls";
+import { getTicketsByCitiesAndDate, getTopCities } from "../../api/apiCalls";
 import ApiHandler from "../../api/ApiHandler";
+import { FindedTicketDispatch } from "../contexts/FindedTickerContext";
 
 const Main = () => {
 
     const requstContextDispatcher = useContext(TicketRequestDispatcher);
+    const findedTicketDispatcher = useContext(FindedTicketDispatch);
 
     const [departureCity, setDepartureCity] = useState();
     const [arrivalCity, setArrivalCity] = useState();
@@ -51,6 +53,15 @@ const Main = () => {
             startDate: startDate,
             endDate: endDate
         }
+
+        getTicketsByCitiesAndDate(request).then(
+            (result) =>{
+                findedTicketDispatcher({
+                    type:'CHANGE_TICKETS',
+                    tickets:result
+                })
+            }
+        )
 
         requstContextDispatcher({
             type: 'change_request', 

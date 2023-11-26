@@ -2,23 +2,28 @@ import { useContext } from "react";
 import { LoginContext } from "../contexts/UserContext";
 import Header from "../home/Header";
 import Footer from "../home/Footer";
-import { Card, CardBody, CardHeader, CardSubtitle, CardText, CardTitle, Col, Container, ListGroup, ListGroupItem, Row } from "reactstrap";
-import { useApiCallWithArgs } from "../../api/FetchData";
-import { getUsersTickets } from "../../api/apiCalls";
-import ApiHandler from "../../api/ApiHandler";
-import dayjs from "dayjs";
+import { Card, CardHeader, Col, Container, ListGroup, ListGroupItem, Row } from "reactstrap";
+import TicketCards from "../ticket/TicketCards";
+import TicketsFilter from "../ticket/TicketsFilter";
+import { UserFilteredTicketsContext, UserTicketDispatcher } from "../contexts/UserTicketsContext";
 
 const UserProfile = () => {
     const User = useContext(LoginContext)
 
-    const [userTicketsStatus, userTickets, userTicketsErrors] = useApiCallWithArgs(getUsersTickets, User.user.login)
+    const tickets = useContext(UserFilteredTicketsContext)
+    const userTicketDispatcher = useContext(UserTicketDispatcher)
 
-    console.log(User);
+
+    const convertToTicket = (userTickets) => {
+        let arr = userTickets.map(userTicket => userTicket.ticket)
+        console.log(arr);
+        return arr
+    }
 
     return(
         <div>
             <Header/>
-            <Container>
+            <Container style={{marginTop:40}}>
                 <Row>
                     <Col>
                         <Card style={{ marginTop:20}}>
@@ -45,35 +50,18 @@ const UserProfile = () => {
                 
                 <Row style={{marginTop:50}}>
                 <h3>Purchased tickets</h3>
-                <ApiHandler loading={userTicketsStatus} error={userTicketsErrors}>
-                    <Row lg={4} style={{marginTop:50}}>
-                        {userTickets.map((ticket, index) => (
-                            <Col className="d-flex" key={index}>
-                                <Card className="flex-fill" style={{margin:20}}>
-                                    <CardBody>
-                                        <CardHeader >
-                                            {ticket.ticket.flight.departureAirport.city + ' ===> ' + ticket.ticket.flight.arrivalAirport.city}
-                                        </CardHeader>
-                                        <ListGroup>
-                                            <ListGroupItem>
-                                                Departure date: {dayjs(ticket.ticket.flight.departureDate).format("DD/MM/YYYY HH:mm:ss")}
-                                            </ListGroupItem>
-                                            <ListGroupItem>
-                                                Arrival date: {dayjs(ticket.ticket.flight.arrivalDate).format("DD/MM/YYYY HH:mm:ss")}
-                                            </ListGroupItem>
-                                            <ListGroupItem>
-                                                Flight class: {ticket.ticket.flightClass}
-                                            </ListGroupItem>
-                                            <ListGroupItem>
-                                                Flight cost: {ticket.ticket.cost}
-                                            </ListGroupItem>
-                                        </ListGroup>
-                                    </CardBody>
-                                </Card>
-                            </Col>
-                        ))}
+                { tickets !== undefined &&
+                    <Row>
+                        <Col xs="2" style={{marginTop:20}}>
+                            <TicketsFilter dispatch={userTicketDispatcher}/>
+                        </Col>
+                        <Col xs="10">
+                            <Row lg={3} style={{marginTop:50}}>
+                                <TicketCards tickets={convertToTicket(tickets)} isBuiable={false}/>
+                            </Row>
+                        </Col>
                     </Row>
-                </ApiHandler>
+                }
                 </Row>
             </Container>
             <Footer/>

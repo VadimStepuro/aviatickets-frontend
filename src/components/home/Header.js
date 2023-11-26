@@ -27,8 +27,8 @@ const Header = () => {
 
 
   return (
-    <Container className='border-bottom'>
-        <Navbar color="white" light expand="md" >
+    <Container className='border-bottom fixed-top' >
+        <Navbar color="white" light expand="md">
         <button style={brandButtonStyle} onClick={handleHome}>
             <NavbarBrand>Aviatickets</NavbarBrand>
         </button>
